@@ -1,0 +1,742 @@
+{
+  "C:\\Users\\USUARIO\\De la U\\Cloud\\freeloud-lambda\\serverless.yml": {
+    "versionFramework": "4.27.0",
+    "servicePath": "C:\\Users\\USUARIO\\De la U\\Cloud\\freeloud-lambda\\serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "freeloud-minecraft",
+      "provider": {
+        "name": "aws",
+        "runtime": "python3.12",
+        "region": "us-east-1",
+        "environment": {
+          "INSTANCE_ID": "i-0156d50467b087f14",
+          "REGION": "us-east-1"
+        },
+        "iam": {
+          "role": {
+            "statements": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "ec2:StartInstances",
+                  "ec2:DescribeInstances",
+                  "ec2:DescribeInstanceStatus"
+                ],
+                "Resource": "*"
+              }
+            ]
+          }
+        },
+        "stage": "dev",
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "StartServerLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/freeloud-minecraft-dev-startServer"
+              }
+            },
+            "IamRoleLambdaExecution": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": [
+                          "lambda.amazonaws.com"
+                        ]
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "Policies": [
+                  {
+                    "PolicyName": {
+                      "Fn::Join": [
+                        "-",
+                        [
+                          "freeloud-minecraft",
+                          "dev",
+                          "lambda"
+                        ]
+                      ]
+                    },
+                    "PolicyDocument": {
+                      "Version": "2012-10-17",
+                      "Statement": [
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:CreateLogStream",
+                            "logs:CreateLogGroup",
+                            "logs:TagResource"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/freeloud-minecraft-dev*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "logs:PutLogEvents"
+                          ],
+                          "Resource": [
+                            {
+                              "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/freeloud-minecraft-dev*:*:*"
+                            }
+                          ]
+                        },
+                        {
+                          "Effect": "Allow",
+                          "Action": [
+                            "ec2:StartInstances",
+                            "ec2:DescribeInstances",
+                            "ec2:DescribeInstanceStatus"
+                          ],
+                          "Resource": "*"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "Path": "/",
+                "RoleName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "freeloud-minecraft",
+                      "dev",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "lambdaRole"
+                    ]
+                  ]
+                }
+              }
+            },
+            "StartServerLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-us-east-1-427becbb-bfdd",
+                  "S3Key": "serverless/freeloud-minecraft/dev/1765149083810-2025-12-07T23:11:23.810Z/freeloud-minecraft.zip"
+                },
+                "Handler": "handler.start_server",
+                "Runtime": "python3.12",
+                "FunctionName": "freeloud-minecraft-dev-startServer",
+                "MemorySize": 1024,
+                "Timeout": 180,
+                "Environment": {
+                  "Variables": {
+                    "INSTANCE_ID": "i-0156d50467b087f14",
+                    "REGION": "us-east-1"
+                  }
+                },
+                "Role": {
+                  "Fn::GetAtt": [
+                    "IamRoleLambdaExecution",
+                    "Arn"
+                  ]
+                }
+              },
+              "DependsOn": [
+                "StartServerLogGroup"
+              ]
+            },
+            "StartServerLambdaVersionmokWVs8H7FiLpiSRR6a9rWTDSk3hi5rPTWmnTRqtnE": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "StartServerLambdaFunction"
+                },
+                "CodeSha256": "fLtio3qfqmGtGH4+qAymxnZVLCEbHx7BdrgDOJ2fWJw="
+              }
+            },
+            "StartServerLambdaFunctionUrl": {
+              "Type": "AWS::Lambda::Url",
+              "Properties": {
+                "AuthType": "NONE",
+                "TargetFunctionArn": {
+                  "Fn::GetAtt": [
+                    "StartServerLambdaFunction",
+                    "Arn"
+                  ]
+                }
+              }
+            },
+            "StartServerLambdaPermissionFnUrl": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "StartServerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunctionUrl",
+                "Principal": "*",
+                "FunctionUrlAuthType": "NONE"
+              }
+            },
+            "StartServerLambdaPermissionFnUrlInvokeFunction": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "StartServerLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "*",
+                "InvokedViaFunctionUrl": true
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-us-east-1-427becbb-bfdd",
+              "Export": {
+                "Name": "sls-freeloud-minecraft-dev-ServerlessDeploymentBucketName"
+              }
+            },
+            "StartServerLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "StartServerLambdaVersionmokWVs8H7FiLpiSRR6a9rWTDSk3hi5rPTWmnTRqtnE"
+              },
+              "Export": {
+                "Name": "sls-freeloud-minecraft-dev-StartServerLambdaFunctionQualifiedArn"
+              }
+            },
+            "StartServerLambdaFunctionUrl": {
+              "Description": "Lambda Function URL",
+              "Value": {
+                "Fn::GetAtt": [
+                  "StartServerLambdaFunctionUrl",
+                  "FunctionUrl"
+                ]
+              },
+              "Export": {
+                "Name": "sls-freeloud-minecraft-dev-StartServerLambdaFunctionUrl"
+              }
+            }
+          }
+        },
+        "vpc": {}
+      },
+      "functions": {
+        "startServer": {
+          "handler": "handler.start_server",
+          "timeout": 180,
+          "url": true,
+          "events": [],
+          "name": "freeloud-minecraft-dev-startServer",
+          "package": {},
+          "memory": 1024,
+          "runtime": "python3.12",
+          "vpc": {},
+          "versionLogicalId": "StartServerLambdaVersionmokWVs8H7FiLpiSRR6a9rWTDSk3hi5rPTWmnTRqtnE"
+        }
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.12",
+      "region": "us-east-1",
+      "environment": {
+        "INSTANCE_ID": "i-0156d50467b087f14",
+        "REGION": "us-east-1"
+      },
+      "iam": {
+        "role": {
+          "statements": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "ec2:StartInstances",
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceStatus"
+              ],
+              "Resource": "*"
+            }
+          ]
+        }
+      },
+      "stage": "dev",
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "StartServerLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/freeloud-minecraft-dev-startServer"
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "freeloud-minecraft",
+                        "dev",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:CreateLogGroup",
+                          "logs:TagResource"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/freeloud-minecraft-dev*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/freeloud-minecraft-dev*:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "ec2:StartInstances",
+                          "ec2:DescribeInstances",
+                          "ec2:DescribeInstanceStatus"
+                        ],
+                        "Resource": "*"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "freeloud-minecraft",
+                    "dev",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              }
+            }
+          },
+          "StartServerLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-427becbb-bfdd",
+                "S3Key": "serverless/freeloud-minecraft/dev/1765149083810-2025-12-07T23:11:23.810Z/freeloud-minecraft.zip"
+              },
+              "Handler": "handler.start_server",
+              "Runtime": "python3.12",
+              "FunctionName": "freeloud-minecraft-dev-startServer",
+              "MemorySize": 1024,
+              "Timeout": 180,
+              "Environment": {
+                "Variables": {
+                  "INSTANCE_ID": "i-0156d50467b087f14",
+                  "REGION": "us-east-1"
+                }
+              },
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "StartServerLogGroup"
+            ]
+          },
+          "StartServerLambdaVersionmokWVs8H7FiLpiSRR6a9rWTDSk3hi5rPTWmnTRqtnE": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "StartServerLambdaFunction"
+              },
+              "CodeSha256": "fLtio3qfqmGtGH4+qAymxnZVLCEbHx7BdrgDOJ2fWJw="
+            }
+          },
+          "StartServerLambdaFunctionUrl": {
+            "Type": "AWS::Lambda::Url",
+            "Properties": {
+              "AuthType": "NONE",
+              "TargetFunctionArn": {
+                "Fn::GetAtt": [
+                  "StartServerLambdaFunction",
+                  "Arn"
+                ]
+              }
+            }
+          },
+          "StartServerLambdaPermissionFnUrl": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "StartServerLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunctionUrl",
+              "Principal": "*",
+              "FunctionUrlAuthType": "NONE"
+            }
+          },
+          "StartServerLambdaPermissionFnUrlInvokeFunction": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "StartServerLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "*",
+              "InvokedViaFunctionUrl": true
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-east-1-427becbb-bfdd",
+            "Export": {
+              "Name": "sls-freeloud-minecraft-dev-ServerlessDeploymentBucketName"
+            }
+          },
+          "StartServerLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "StartServerLambdaVersionmokWVs8H7FiLpiSRR6a9rWTDSk3hi5rPTWmnTRqtnE"
+            },
+            "Export": {
+              "Name": "sls-freeloud-minecraft-dev-StartServerLambdaFunctionQualifiedArn"
+            }
+          },
+          "StartServerLambdaFunctionUrl": {
+            "Description": "Lambda Function URL",
+            "Value": {
+              "Fn::GetAtt": [
+                "StartServerLambdaFunctionUrl",
+                "FunctionUrl"
+              ]
+            },
+            "Export": {
+              "Name": "sls-freeloud-minecraft-dev-StartServerLambdaFunctionUrl"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "serviceRawFile": "service: freeloud-minecraft\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: python3.12\r\n  region: us-east-1\r\n  \r\n  environment:\r\n    INSTANCE_ID: i-0156d50467b087f14\r\n    REGION: us-east-1\r\n  \r\n  iam:\r\n    role:\r\n      statements:\r\n        - Effect: Allow\r\n          Action:\r\n            - ec2:StartInstances\r\n            - ec2:DescribeInstances\r\n            - ec2:DescribeInstanceStatus\r\n          Resource: '*'\r\n\r\nfunctions:\r\n  startServer:\r\n    handler: handler.start_server\r\n    timeout: 180\r\n    url: true\r\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {},
+    "orgId": "16033296-3fcb-40e2-8e0b-9713066ab512",
+    "orgName": "cloudcomputingudea",
+    "userId": "tBjLFDGK7CnJ1yXZzX",
+    "userName": "cloudcomputingudea",
+    "serviceProviderAwsAccountId": "405894840436",
+    "serviceProviderAwsCfStackName": "freeloud-minecraft-dev",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:405894840436:stack/freeloud-minecraft-dev/0ffbed10-d3c2-11f0-be1a-12289d016959",
+    "serviceProviderAwsCfStackCreated": "2025-12-07T23:11:29.506Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "StartServerLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:405894840436:function:freeloud-minecraft-dev-startServer:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-freeloud-minecraft-dev-StartServerLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "StartServerLambdaFunctionUrl",
+        "OutputValue": "https://jm35zs46rn5bw5bbz4eq57mjf40tvlzc.lambda-url.us-east-1.on.aws/",
+        "Description": "Lambda Function URL",
+        "ExportName": "sls-freeloud-minecraft-dev-StartServerLambdaFunctionUrl"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-east-1-427becbb-bfdd",
+        "ExportName": "sls-freeloud-minecraft-dev-ServerlessDeploymentBucketName"
+      }
+    ],
+    "compiledCloudFormationTemplate": {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Description": "The AWS CloudFormation template for this Serverless application",
+      "Resources": {
+        "StartServerLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/freeloud-minecraft-dev-startServer"
+          }
+        },
+        "IamRoleLambdaExecution": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "lambda.amazonaws.com"
+                    ]
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "Policies": [
+              {
+                "PolicyName": {
+                  "Fn::Join": [
+                    "-",
+                    [
+                      "freeloud-minecraft",
+                      "dev",
+                      "lambda"
+                    ]
+                  ]
+                },
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:CreateLogStream",
+                        "logs:CreateLogGroup",
+                        "logs:TagResource"
+                      ],
+                      "Resource": [
+                        {
+                          "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/freeloud-minecraft-dev*:*"
+                        }
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:PutLogEvents"
+                      ],
+                      "Resource": [
+                        {
+                          "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/freeloud-minecraft-dev*:*:*"
+                        }
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "ec2:StartInstances",
+                        "ec2:DescribeInstances",
+                        "ec2:DescribeInstanceStatus"
+                      ],
+                      "Resource": "*"
+                    }
+                  ]
+                }
+              }
+            ],
+            "Path": "/",
+            "RoleName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "freeloud-minecraft",
+                  "dev",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  "lambdaRole"
+                ]
+              ]
+            }
+          }
+        },
+        "StartServerLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-us-east-1-427becbb-bfdd",
+              "S3Key": "serverless/freeloud-minecraft/dev/1765149083810-2025-12-07T23:11:23.810Z/freeloud-minecraft.zip"
+            },
+            "Handler": "handler.start_server",
+            "Runtime": "python3.12",
+            "FunctionName": "freeloud-minecraft-dev-startServer",
+            "MemorySize": 1024,
+            "Timeout": 180,
+            "Environment": {
+              "Variables": {
+                "INSTANCE_ID": "i-0156d50467b087f14",
+                "REGION": "us-east-1"
+              }
+            },
+            "Role": {
+              "Fn::GetAtt": [
+                "IamRoleLambdaExecution",
+                "Arn"
+              ]
+            }
+          },
+          "DependsOn": [
+            "StartServerLogGroup"
+          ]
+        },
+        "StartServerLambdaVersionmokWVs8H7FiLpiSRR6a9rWTDSk3hi5rPTWmnTRqtnE": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "StartServerLambdaFunction"
+            },
+            "CodeSha256": "fLtio3qfqmGtGH4+qAymxnZVLCEbHx7BdrgDOJ2fWJw="
+          }
+        },
+        "StartServerLambdaFunctionUrl": {
+          "Type": "AWS::Lambda::Url",
+          "Properties": {
+            "AuthType": "NONE",
+            "TargetFunctionArn": {
+              "Fn::GetAtt": [
+                "StartServerLambdaFunction",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "StartServerLambdaPermissionFnUrl": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "StartServerLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunctionUrl",
+            "Principal": "*",
+            "FunctionUrlAuthType": "NONE"
+          }
+        },
+        "StartServerLambdaPermissionFnUrlInvokeFunction": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "StartServerLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "*",
+            "InvokedViaFunctionUrl": true
+          }
+        }
+      },
+      "Outputs": {
+        "ServerlessDeploymentBucketName": {
+          "Value": "serverless-framework-deployments-us-east-1-427becbb-bfdd",
+          "Export": {
+            "Name": "sls-freeloud-minecraft-dev-ServerlessDeploymentBucketName"
+          }
+        },
+        "StartServerLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "StartServerLambdaVersionmokWVs8H7FiLpiSRR6a9rWTDSk3hi5rPTWmnTRqtnE"
+          },
+          "Export": {
+            "Name": "sls-freeloud-minecraft-dev-StartServerLambdaFunctionQualifiedArn"
+          }
+        },
+        "StartServerLambdaFunctionUrl": {
+          "Description": "Lambda Function URL",
+          "Value": {
+            "Fn::GetAtt": [
+              "StartServerLambdaFunctionUrl",
+              "FunctionUrl"
+            ]
+          },
+          "Export": {
+            "Name": "sls-freeloud-minecraft-dev-StartServerLambdaFunctionUrl"
+          }
+        }
+      }
+    }
+  }
+}
